@@ -1,11 +1,8 @@
 // 1. إعدادات Supabase
 const SUPABASE_URL = 'https://xylmdahldlkwvkjjjfdj.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_3WIU1Le_QMyRZk-Wj9rx9g_LQz524Y3';
-
-// 2. رابط دالة جلب الملفات
 const GET_FILES_URL = 'https://xylmdahldlkwvkjjjfdj.supabase.co/functions/v1/get-files';
 
-// جلب روابط الملفات ووضعها في الأزرار
 async function fetchFileLinks() {
     try {
         const res = await fetch(GET_FILES_URL, {
@@ -13,12 +10,10 @@ async function fetchFileLinks() {
         });
         const links = await res.json();
         
-        // إعداد صورة الخلفية (إذا كانت موجودة في جوجل درايف)
         if (links.background) {
             document.body.style.backgroundImage = `url('${links.background}')`;
         }
 
-        // تحويل روابط المعاينة إلى روابط مباشرة تفتح بدون تسجيل دخول جوجل
         if(links.add_drop) document.getElementById('btn-form1').href = links.add_drop.replace('/preview', '/view');
         if(links.withdrawal) document.getElementById('btn-form2').href = links.withdrawal.replace('/preview', '/view');
         
@@ -27,7 +22,6 @@ async function fetchFileLinks() {
     }
 }
 
-// دوال التنقل بين الشاشات
 function showLoginScreen() {
     document.getElementById('main-screen').classList.remove('active');
     document.getElementById('login-screen').classList.add('active');
@@ -41,7 +35,6 @@ function goBack() {
     document.getElementById('main-screen').classList.add('active');
 }
 
-// البحث عن الطالب
 async function login() {
     const nationalId = document.getElementById('national-id').value;
     const errorMsg = document.getElementById('error-msg');
@@ -75,6 +68,7 @@ async function login() {
         
         const advisorInfo = document.getElementById('advisor-info');
         if (student.advisor_name) {
+            // هنا يتم وضع المتغيرات في أماكنها الصحيحة
             advisorInfo.innerHTML = `
                 <strong>اسم المرشد:</strong> ${student.advisor_name} <br>
                 <strong>القسم العلمي:</strong> ${student.advisor_department || 'غير محدد'} <br>
@@ -84,7 +78,6 @@ async function login() {
             advisorInfo.innerText = "لم يتم تعيين مرشد لهذا الطالب بقاعدة البيانات.";
         }
 
-        // الانتقال لشاشة النتيجة
         document.getElementById('login-screen').classList.remove('active');
         document.getElementById('result-screen').classList.add('active');
 
@@ -94,7 +87,6 @@ async function login() {
     }
 }
 
-// عند تحميل الصفحة
 window.onload = () => {
     fetchFileLinks();
 };
