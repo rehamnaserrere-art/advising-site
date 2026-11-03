@@ -6,7 +6,6 @@
     <title>لوحة تحكم الأدمن</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* تنسيقات إضافية خاصة بصفحة الأدمن */
         .admin-card {
             background: white;
             padding: 40px;
@@ -19,26 +18,14 @@
         .admin-card h2 { color: #0056b3; margin-top: 0; }
         .admin-card hr { border: 0; height: 1px; background: #eee; margin: 20px 0; }
         .sync-btn {
-            width: 100%;
-            padding: 15px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
+            width: 100%; padding: 15px; background-color: #28a745; color: white;
+            border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s;
         }
         .sync-btn:hover { background-color: #218838; }
         .sync-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
         #status-message {
-            margin-top: 25px;
-            padding: 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            display: none;
-            word-wrap: break-word;
+            margin-top: 25px; padding: 15px; border-radius: 5px;
+            font-weight: bold; display: none; word-wrap: break-word;
         }
         .status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
@@ -47,31 +34,27 @@
 </head>
 <body>
 
-    <!-- شاشة لوحة التحكم -->
-    <div class="screen active" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+    <div class="screen active" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100%;">
         <div class="admin-card">
             <h2>لوحة تحكم الأدمن</h2>
-            <p>هنا يمكنك تحديث بيانات الطلاب والمرشدين من جوجل درايف (ملفات الإكسل) بضغطة زر.</p>
+            <p>تحديث بيانات الطلاب والمرشدين من ملفات الإكسل على جوجل درايف.</p>
             <hr>
             
             <button id="sync-btn" class="sync-btn" onclick="syncData()">
                 تحديث بيانات الطلاب الآن (Sync)
             </button>
             
-            <!-- مكان ظهور رسائل النجاح أو الخطأ -->
             <div id="status-message"></div>
         </div>
     </div>
 
     <script>
-        // رابط دالة تحديث البيانات الخاصة بك في Supabase
         const SYNC_FUNCTION_URL = 'https://xylmdahldlkwvkjjjfdj.supabase.co/functions/v1/sync-students';
 
         async function syncData() {
             const statusDiv = document.getElementById('status-message');
             const btn = document.getElementById('sync-btn');
 
-            // إظهار حالة التحميل وتعطيل الزر
             statusDiv.style.display = 'block';
             statusDiv.className = 'status-loading';
             statusDiv.innerHTML = '⏳ جاري الاتصال بجوجل درايف وقراءة البيانات...<br><span style="font-size:14px; font-weight:normal;">(قد تستغرق العملية من 10 إلى 30 ثانية)</span>';
@@ -82,39 +65,25 @@
             try {
                 const response = await fetch(SYNC_FUNCTION_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    headers: { 'Content-Type': 'application/json' }
                 });
 
-                // نقرأ النص أولاً لتفادي خطأ if the server returns HTML instead of JSON
                 const textResponse = await response.text();
                 let result;
-
-                try {
-                    // محاولة تحويل النص إلى JSON
-                    result = JSON.parse(textResponse);
-                } catch (e) {
-                    // إذا فشل التحويل، فهذا يعني أن السيرفر أرجع خطأ نصي أو صفحة HTML
-                    result = { error: textResponse };
-                }
+                try { result = JSON.parse(textResponse); } catch (e) { result = { error: textResponse }; }
 
                 if (response.ok) {
-                    // نجاح العملية
                     statusDiv.className = 'status-success';
                     statusDiv.innerHTML = '✅ ' + (result.message || 'تم تحديث البيانات بنجاح!');
                 } else {
-                    // فشل العملية (خطأ من السيرفر أو من الدالة)
                     statusDiv.className = 'status-error';
-                    statusDiv.innerHTML = '❌ خطأ: ' + (result.error || result.message || 'حدث خطأ غير معروف أثناء جلب البيانات.');
+                    statusDiv.innerHTML = '❌ خطأ: ' + (result.error || result.message || 'حدث خطأ غير معروف.');
                 }
 
             } catch (error) {
-                // خطأ في الاتصال بالشبكة
                 statusDiv.className = 'status-error';
                 statusDiv.innerHTML = '❌ خطأ في الاتصال بالسيرفر: ' + error.message;
             } finally {
-                // إعادة الزر إلى حالته الطبيعية في كل الأحوال
                 btn.disabled = false;
                 btn.innerText = 'تحديث بيانات الطلاب الآن (Sync)';
             }
