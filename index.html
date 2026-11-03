@@ -8,40 +8,57 @@
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول -->
-    <div id="login-screen" class="screen active">
-        <div class="login-box">
-            <h2>أهلاً بك في الإرشاد الأكاديمي</h2>
+    <!-- الشاشة الرئيسية (الخدمات الثلاثة) -->
+    <div id="main-screen" class="screen active">
+        <div class="header">
+            <h1>خدمات الإرشاد الأكاديمي</h1>
             <p>كلية علوم الرياضة - جامعة الإسكندرية</p>
-            <hr>
+        </div>
+
+        <div class="services-grid">
+            <!-- الخدمة الأولى: معرفة المرشد (تفتح شاشة الدخول) -->
+            <div class="service-card" onclick="showLoginScreen()">
+                <h3>👨‍🏫 معرفة المرشد الأكاديمي</h3>
+                <p>اضغط للاستعلام برقمك القومي</p>
+            </div>
+
+            <!-- الخدمة الثانية: استمارة الحذف والإضافة (رابط مباشر) -->
+            <a id="btn-form1" href="#" target="_blank" class="service-card">
+                <h3>📄 استمارة الحذف والإضافة</h3>
+                <p>اضغط لفتح الاستمارة (PDF)</p>
+            </a>
+
+            <!-- الخدمة الثالثة: استمارة الانسحاب (رابط مباشر) -->
+            <a id="btn-form2" href="#" target="_blank" class="service-card">
+                <h3>📄 استمارة الانسحاب من مقرر</h3>
+                <p>اضغط لفتح الاستمارة (PDF)</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- شاشة إدخال الرقم القومي -->
+    <div id="login-screen" class="screen">
+        <div class="login-box">
+            <h2>الاستعلام عن المرشد الأكاديمي</h2>
             <p>يرجى إدخال الرقم القومي (أرقام فقط)</p>
             <input type="text" id="national-id" placeholder="الرقم القومي" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            <button onclick="login()">دخول</button>
+            <button onclick="login()">بحث</button>
+            <button onclick="goBack()" class="back-btn">عودة</button>
             <p id="error-msg" style="color: red; display: none;"></p>
         </div>
     </div>
 
-    <!-- شاشة الخدمات (تظهر بعد تسجيل الدخول) -->
-    <div id="services-screen" class="screen">
+    <!-- شاشة عرض بيانات المرشد -->
+    <div id="result-screen" class="screen">
         <div class="header">
-            <h1>خدمات الإرشاد الأكاديمي</h1>
+            <h2>بيانات المرشد الأكاديمي</h2>
             <h3>الطالب: <span id="student-name"></span></h3>
-           <div id="advisor-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: right; border-right: 5px solid #0056b3;">
-    <h3 style="margin-top: 0; color: #0056b3;">بيانات المرشد الأكاديمي:</h3>
-    <p id="advisor-info" style="font-size: 16px; line-height: 1.6;">جاري التحميل...</p>
-</div>
-            <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
-        </div>
-
-        <div class="services-grid">
-            <a id="btn-form1" href="#" target="_blank" class="service-card">
-                <h3>📄 استمارة الحذف والإضافة</h3>
-                <p>اضغط لفتح الاستمارة</p>
-            </a>
-            <a id="btn-form2" href="#" target="_blank" class="service-card">
-                <h3>📄 استمارة الانسحاب من مقرر</h3>
-                <p>اضغط لفتح الاستمارة</p>
-            </a>
+            
+            <div id="advisor-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: right; border-right: 5px solid #0056b3;">
+                <p id="advisor-info" style="font-size: 18px; line-height: 1.8;">جاري التحميل...</p>
+            </div>
+            
+            <button onclick="goBack()" class="back-btn" style="background-color: #6c757d;">عودة للرئيسية</button>
         </div>
     </div>
 
