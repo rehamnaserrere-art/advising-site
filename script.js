@@ -13,17 +13,14 @@ async function fetchFileLinks() {
         });
         const links = await res.json();
         
-        // إعداد صورة الخلفية
+        // إعداد صورة الخلفية (إذا كانت موجودة في جوجل درايف)
         if (links.background) {
             document.body.style.backgroundImage = `url('${links.background}')`;
-            document.body.style.backgroundSize = 'cover';
-            document.body.style.backgroundPosition = 'center';
-            document.body.style.backgroundAttachment = 'fixed';
         }
 
         // تحويل روابط المعاينة إلى روابط مباشرة تفتح بدون تسجيل دخول جوجل
-        document.getElementById('btn-form1').href = links.add_drop.replace('/preview', '/view') || '#';
-        document.getElementById('btn-form2').href = links.withdrawal.replace('/preview', '/view') || '#';
+        if(links.add_drop) document.getElementById('btn-form1').href = links.add_drop.replace('/preview', '/view');
+        if(links.withdrawal) document.getElementById('btn-form2').href = links.withdrawal.replace('/preview', '/view');
         
     } catch (e) {
         console.log("خطأ في جلب الملفات", e);
@@ -51,6 +48,7 @@ async function login() {
 
     if (nationalId.length !== 14) {
         errorMsg.innerText = "يرجى إدخال الرقم القومي كاملاً (14 رقماً)";
+        errorMsg.style.color = "red";
         errorMsg.style.display = 'block';
         return;
     }
@@ -67,7 +65,7 @@ async function login() {
         const data = await response.json();
 
         if (data.length === 0) {
-            errorMsg.innerText = "هذا الرقم القومي غير مسجل.";
+            errorMsg.innerText = "هذا الرقم القومي غير مسجل بقاعدة البيانات.";
             errorMsg.style.color = "red";
             return;
         }
@@ -83,7 +81,7 @@ async function login() {
                 <strong>رقم الهاتف:</strong> ${student.advisor_phone || 'غير متوفر'}
             `;
         } else {
-            advisorInfo.innerText = "لم يتم تعيين مرشد لهذا الطالب في قاعدة البيانات.";
+            advisorInfo.innerText = "لم يتم تعيين مرشد لهذا الطالب بقاعدة البيانات.";
         }
 
         // الانتقال لشاشة النتيجة
@@ -91,7 +89,7 @@ async function login() {
         document.getElementById('result-screen').classList.add('active');
 
     } catch (error) {
-        errorMsg.innerText = "حدث خطأ في الاتصال.";
+        errorMsg.innerText = "حدث خطأ في الاتصال بالسيرفر.";
         errorMsg.style.color = "red";
     }
 }
