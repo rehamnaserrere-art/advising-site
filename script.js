@@ -2,24 +2,19 @@
 const SUPABASE_URL = 'https://xylmdahldlkwvkjjjfdj.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_3WIU1Le_QMyRZk-Wj9rx9g_LQz524Y3';
 
-// 2. رابط دالة جلب الملفات من جوجل درايف
+// 2. رابط دالة جلب الملفات
 const GET_FILES_URL = 'https://xylmdahldlkwvkjjjfdj.supabase.co/functions/v1/get-files';
 
-// 3. متغيرات لحفظ الروابط
 let driveLinks = { add_drop: '', withdrawal: '', background: '' };
 
-// دالة لجلب الروابط عند فتح الصفحة (تعمل بالاسم وليس بالمعرف)
+// جلب الروابط عند التحميل
 async function fetchFileLinks() {
     try {
         const res = await fetch(GET_FILES_URL, {
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-            }
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
         });
         driveLinks = await res.json();
         
-        // تعيين صورة الخلفية تلقائياً
         if (driveLinks.background) {
             document.body.style.backgroundImage = `url('${driveLinks.background}')`;
             document.body.style.backgroundSize = 'cover';
@@ -27,16 +22,16 @@ async function fetchFileLinks() {
             document.body.style.backgroundAttachment = 'fixed';
         }
 
-        // تعيين روابط ملفات الـ PDF
-        document.getElementById('btn-form1').href = driveLinks.add_drop || '#';
-        document.getElementById('btn-form2').href = driveLinks.withdrawal || '#';
+        // تحويل روابط المعاينة إلى روابط مباشرة (View) لتفتح بدون حساب جوجل
+        document.getElementById('btn-form1').href = driveLinks.add_drop.replace('/preview', '/view') || '#';
+        document.getElementById('btn-form2').href = driveLinks.withdrawal.replace('/preview', '/view') || '#';
         
     } catch (e) {
         console.log("خطأ في جلب الملفات", e);
     }
 }
 
-// دالة تسجيل الدخول
+// تسجيل الدخول
 async function login() {
     const nationalId = document.getElementById('national-id').value;
     const errorMsg = document.getElementById('error-msg');
@@ -53,10 +48,7 @@ async function login() {
 
     try {
         const response = await fetch(`${SUPABASE_URL}/rest/v1/students?national_id=eq.${nationalId}`, {
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-            }
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
         });
 
         const data = await response.json();
@@ -70,8 +62,17 @@ async function login() {
         const student = data[0];
         document.getElementById('student-name').innerText = student.student_name;
         
-        // يمكنك لاحقاً جلب اسم المرشد من جدول آخر، حالياً سنضع نصاً مؤقتاً
-        document.getElementById('advisor-name').innerText = "يرجى مراجعة شؤون الطلاب";
+        // إظهار بيانات المرشد
+        const advisorInfo = document.getElementById('advisor-info');
+        if (student.advisor_name) {
+            advisorInfo.innerHTML = `
+                <strong>اسم المرشد:</strong> ${student.advisor_name} <br>
+                <strong>القسم العلمي:</strong> ${student.advisor_department || 'غير محدد'} <br>
+                <strong>رقم الهاتف:</strong> ${student.advisor_phone || 'غير متوفر'}
+            `;
+        } else {
+            advisorInfo.innerText = "يرجى مراجعة شؤون الطلاب لمعرفة المرشد";
+        }
 
         document.getElementById('login-screen').classList.remove('active');
         document.getElementById('services-screen').classList.add('active');
@@ -83,7 +84,6 @@ async function login() {
     }
 }
 
-// دالة تسجيل الخروج
 function logout() {
     localStorage.removeItem('loggedInStudent');
     document.getElementById('services-screen').classList.remove('active');
@@ -92,10 +92,8 @@ function logout() {
     document.getElementById('error-msg').style.display = 'none';
 }
 
-// عند تحميل الصفحة لأول مرة
 window.onload = () => {
-    fetchFileLinks(); // اجلب روابط الملفات من درايف
-    
+    fetchFileLinks();
     const savedId = localStorage.getItem('loggedInStudent');
     if (savedId) {
         document.getElementById('national-id').value = savedId;
