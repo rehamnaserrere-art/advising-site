@@ -10,25 +10,29 @@
 
     <!-- الشاشة الرئيسية (الخدمات الثلاثة) -->
     <div id="main-screen" class="screen active">
-        <div class="header">
-            <h1>خدمات الإرشاد الأكاديمي</h1>
-            <p>كلية علوم الرياضة - جامعة الإسكندرية</p>
+        <div class="header" style="display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <!-- تم وضع الرابط المباشر للصورة هنا -->
+            <img src="https://lh3.googleusercontent.com/d/1JXlrWCgIyTUni2U0USs8-uOJAmDFpFoW" alt="شعار الكلية" style="height: 90px; width: auto; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+            <div>
+                <h1 style="margin-bottom: 5px;">خدمات الإرشاد الأكاديمي</h1>
+                <p style="margin-top: 0;">كلية علوم الرياضة - جامعة الإسكندرية</p>
+            </div>
         </div>
 
         <div class="services-grid">
-            <!-- الخدمة الأولى: معرفة المرشد (تفتح شاشة الدخول) -->
+            <!-- الخدمة الأولى: معرفة المرشد -->
             <div class="service-card" onclick="showLoginScreen()">
                 <h3>👨‍🏫 معرفة المرشد الأكاديمي</h3>
                 <p>اضغط للاستعلام برقمك القومي</p>
             </div>
 
-            <!-- الخدمة الثانية: استمارة الحذف والإضافة (رابط مباشر) -->
+            <!-- الخدمة الثانية: استمارة الحذف والإضافة -->
             <a id="btn-form1" href="#" target="_blank" class="service-card">
                 <h3>📄 استمارة الحذف والإضافة</h3>
                 <p>اضغط لفتح الاستمارة (PDF)</p>
             </a>
 
-            <!-- الخدمة الثالثة: استمارة الانسحاب (رابط مباشر) -->
+            <!-- الخدمة الثالثة: استمارة الانسحاب -->
             <a id="btn-form2" href="#" target="_blank" class="service-card">
                 <h3>📄 استمارة الانسحاب من مقرر</h3>
                 <p>اضغط لفتح الاستمارة (PDF)</p>
@@ -52,10 +56,10 @@
     <div id="result-screen" class="screen">
         <div class="header">
             <h2>بيانات المرشد الأكاديمي</h2>
-            <h3>الطالب: <span id="student-name"></span></h3>
+            <h3>الطالب: <span id="student-name" style="color: #28a745;"></span></h3>
             
-            <div id="advisor-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: right; border-right: 5px solid #0056b3;">
-                <p id="advisor-info" style="font-size: 18px; line-height: 1.8;">جاري التحميل...</p>
+            <div id="advisor-card" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: right; border-right: 5px solid #0056b3; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <p id="advisor-info" style="font-size: 18px; line-height: 1.8; margin: 0;">جاري التحميل...</p>
             </div>
             
             <button onclick="goBack()" class="back-btn" style="background-color: #6c757d;">عودة للرئيسية</button>
