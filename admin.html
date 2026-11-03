@@ -6,27 +6,14 @@
     <title>لوحة تحكم الأدمن</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .admin-card {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        .admin-card { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; max-width: 600px; margin: 0 auto; }
         .admin-card h2 { color: #0056b3; margin-top: 0; }
         .admin-card hr { border: 0; height: 1px; background: #eee; margin: 20px 0; }
-        .sync-btn {
-            width: 100%; padding: 15px; background-color: #28a745; color: white;
-            border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s;
-        }
+        .admin-card input[type="password"] { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; text-align: center; }
+        .sync-btn { width: 100%; padding: 15px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .sync-btn:hover { background-color: #218838; }
         .sync-btn:disabled { background-color: #6c757d; cursor: not-allowed; }
-        #status-message {
-            margin-top: 25px; padding: 15px; border-radius: 5px;
-            font-weight: bold; display: none; word-wrap: break-word;
-        }
+        #status-message { margin-top: 25px; padding: 15px; border-radius: 5px; font-weight: bold; display: none; word-wrap: break-word; }
         .status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .status-loading { background-color: #cce5ff; color: #004085; border: 1px solid #b8daff; }
@@ -37,8 +24,11 @@
     <div class="screen active" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100%;">
         <div class="admin-card">
             <h2>لوحة تحكم الأدمن</h2>
-            <p>تحديث بيانات الطلاب والمرشدين من ملفات الإكسل على جوجل درايف.</p>
+            <p>تحديث بيانات الطلاب والمرشدين (للمسؤول فقط).</p>
             <hr>
+            
+            <!-- حقل إدخال كلمة السر -->
+            <input type="password" id="admin-key-input" placeholder="أدخل كلمة سر المزامنة هنا">
             
             <button id="sync-btn" class="sync-btn" onclick="syncData()">
                 تحديث بيانات الطلاب الآن (Sync)
@@ -54,10 +44,18 @@
         async function syncData() {
             const statusDiv = document.getElementById('status-message');
             const btn = document.getElementById('sync-btn');
+            const adminKey = document.getElementById('admin-key-input').value;
+
+            if (!adminKey) {
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status-error';
+                statusDiv.innerHTML = '❌ يرجى إدخال كلمة السر أولاً!';
+                return;
+            }
 
             statusDiv.style.display = 'block';
             statusDiv.className = 'status-loading';
-            statusDiv.innerHTML = '⏳ جاري الاتصال بجوجل درايف وقراءة البيانات...<br><span style="font-size:14px; font-weight:normal;">(قد تستغرق العملية من 10 إلى 30 ثانية)</span>';
+            statusDiv.innerHTML = '⏳ جاري التحقق وتحديث البيانات...<br><span style="font-size:14px; font-weight:normal;">(قد تستغرق العملية من 10 إلى 30 ثانية)</span>';
             
             btn.disabled = true;
             btn.innerText = 'جاري التحديث...';
@@ -65,7 +63,10 @@
             try {
                 const response = await fetch(SYNC_FUNCTION_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-admin-key': adminKey // إرسال كلمة السر للسيرفر
+                    }
                 });
 
                 const textResponse = await response.text();
@@ -74,15 +75,15 @@
 
                 if (response.ok) {
                     statusDiv.className = 'status-success';
-                    statusDiv.innerHTML = '✅ ' + (result.message || 'تم تحديث البيانات بنجاح!');
+                    statusDiv.innerHTML = '✅ ' + (result.message || 'تم التحديث بنجاح!');
                 } else {
                     statusDiv.className = 'status-error';
-                    statusDiv.innerHTML = '❌ خطأ: ' + (result.error || result.message || 'حدث خطأ غير معروف.');
+                    statusDiv.innerHTML = '❌ خطأ: ' + (result.error || 'كلمة السر غير صحيحة أو حدث خطأ.');
                 }
 
             } catch (error) {
                 statusDiv.className = 'status-error';
-                statusDiv.innerHTML = '❌ خطأ في الاتصال بالسيرفر: ' + error.message;
+                statusDiv.innerHTML = '❌ خطأ في الاتصال: ' + error.message;
             } finally {
                 btn.disabled = false;
                 btn.innerText = 'تحديث بيانات الطلاب الآن (Sync)';
