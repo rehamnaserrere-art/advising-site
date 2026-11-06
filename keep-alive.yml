@@ -1,0 +1,15 @@
+name: Supabase Keep Alive
+on:
+  schedule:
+    - cron: '0 0 */3 * *' # يعمل كل 3 أيام في منتصف الليل
+  workflow_dispatch: # يسمح لك بتشغيله يدوياً للتجربة
+
+jobs:
+  ping_supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Database
+        run: |
+          curl -X GET "https://xylmdahldlkwvkjjjfdj.supabase.co/rest/v1/students?select=national_id&limit=1" \
+          -H "apikey: sb_publishable_3WIU1Le_QMyRZk-Wj9rx9g_LQz524Y3" \
+          -H "Authorization: Bearer sb_publishable_3WIU1Le_QMyRZk-Wj9rx9g_LQz524Y3"
